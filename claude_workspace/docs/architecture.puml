@@ -1,0 +1,267 @@
+@startuml architecture
+
+skinparam packageStyle rectangle
+skinparam classAttributeIconSize 0
+
+' ─── Domain ───────────────────────────────────────────────────────────────────
+package "Domain" {
+
+  note as N1
+    Ingredients are **value objects**.
+    The customer wants "a cooked meat",
+    not "this specific cooked meat".
+    Two CookedMeat instances are interchangeable.
+  end note
+
+  interface IIngredient {
+    + ScoreValue : int
+  }
+
+  class RawVegetable {
+    + ScoreValue : int = 20
+  }
+
+  class ChoppedVegetable {
+    + ScoreValue : int = 20
+  }
+
+  class RawMeat {
+    + ScoreValue : int = 30
+  }
+
+  class CookedMeat {
+    + ScoreValue : int = 30
+  }
+
+  class RawCheese {
+    + ScoreValue : int = 10
+  }
+
+  IIngredient <|.. RawVegetable
+  IIngredient <|.. ChoppedVegetable
+  IIngredient <|.. RawMeat
+  IIngredient <|.. CookedMeat
+  IIngredient <|.. RawCheese
+
+  class Order {
+    + Requirements : IReadOnlyDictionary<Type, int>
+    + Receive(ingredient : IIngredient) : Order
+    + CalculateScore(elapsedSeconds : float) : int
+  }
+
+  note right of Order
+    Immutable value object.
+    WithDelivered returns a new Order with the
+    matching ingredient removed, or the same
+    instance if no match found.
+    IsDelivered when Requirements is empty.
+    Score = sum(ScoreValues) − floor(elapsedSeconds)
+    Score may be negative.
+  end note
+
+  Order ..> IIngredient : validates
+
+  class OrderFactory {
+    + CreateRandom() : Order
+  }
+
+  note bottom of OrderFactory
+    Generates 2- or 3-ingredient orders (50/50).
+    Requirements are always the fulfilled types.
+    Duplicate ingredient types allowed.
+  end note
+
+  OrderFactory ..> Order : creates
+}
+
+' ─── Core ─────────────────────────────────────────────────────────────────────
+package "Core" {
+
+  enum GameState {
+    Idle
+    Running
+    Paused
+    GameOver
+  }
+
+  class GameManager {
+    - state : GameState
+    - countdown : float
+    + StartGame() : void
+    + Pause() : void
+    + Resume() : void
+  }
+
+  class ScoreManager {
+    + CurrentScore : int
+    + HighScore : int
+    + AddScore(points : int) : void
+    - PersistHighScore() : void
+  }
+
+  note bottom of ScoreManager
+    HighScore persisted via PlayerPrefs.
+  end note
+
+  GameManager --> GameState
+  GameManager --> ScoreManager : notifies
+}
+
+' ─── Player ───────────────────────────────────────────────────────────────────
+package "Player" {
+
+  class PlayerController {
+    ' New Input System: Move (Vector2), Interact (Button), Pause (Button)
+  }
+
+  class PlayerHand {
+    - held : IngredientView
+    + TryPickUp(view : IngredientView) : bool
+    + Drop() : void
+    + Discard() : void
+  }
+
+  note bottom of PlayerHand
+    Enforces single-item hold.
+    TryPickUp returns false when occupied.
+    Holds IngredientView (the entity), not the value.
+  end note
+
+  PlayerController "1" --> "1" PlayerHand : owns
+}
+
+' ─── Interactables ────────────────────────────────────────────────────────────
+package "Interactables" {
+
+  interface IInteractable {
+    + Interact(hand : PlayerHand) : void
+  }
+
+  class IngredientView {
+    - current : IIngredient
+    + Set(ingredient : IIngredient) : void
+    + Current : IIngredient
+  }
+
+  note right of IngredientView
+    Scene entity — has identity as a GameObject.
+    Set() replaces the value object and syncs visuals.
+    Visual sync switches on concrete type — no string keys.
+  end note
+
+  IngredientView --> IIngredient : holds
+
+  class Refrigerator {
+    + Interact(hand : PlayerHand) : void
+  }
+
+  note bottom of Refrigerator
+    Instantiates IngredientView with a random
+    raw ingredient value and gives it to PlayerHand.
+  end note
+
+  class ChoppingTable {
+    - timer : float
+    - occupant : IngredientView
+    + Interact(hand : PlayerHand) : void
+  }
+
+  note bottom of ChoppingTable
+    Accepts IngredientView whose Current is RawVegetable.
+    On timer complete: calls occupant.Set(new ChoppedVegetable()).
+    Blocks pickup until complete.
+  end note
+
+  class StoveSlot {
+    - timer : float
+    - occupant : IngredientView
+    + Interact(hand : PlayerHand) : void
+  }
+
+  note bottom of StoveSlot
+    Accepts IngredientView whose Current is RawMeat.
+    On timer complete: calls occupant.Set(new CookedMeat()).
+    Timer continues while player is away.
+  end note
+
+  class Stove {
+    - slots : StoveSlot[2]
+    + Interact(hand : PlayerHand) : void
+  }
+
+  note bottom of Stove
+    Routes interact to first free StoveSlot.
+    Rejects when both slots full.
+  end note
+
+  class OrderView {
+    - currentOrder : Order
+    - originalOrder : Order
+    - elapsed : float
+    + Deliver(ingredient : IIngredient) : void
+    + event OnDelivered(addedScore : int)
+  }
+
+  note right of OrderView
+    Mutable value object (MonoBehaviour).
+    Holds immutable Order; replaces it via
+    WithDelivered on each delivery.
+    Announces completion with added score,
+    then destroys itself.
+  end note
+
+  class CustomerWindow {
+    + Interact(hand : PlayerHand) : void
+  }
+
+  note bottom of CustomerWindow
+    Entity. Owns OrderView.
+    On OrderView.OnDelivered: displays score popup,
+    notifies ScoreManager, seats new customer.
+  end note
+
+  class Trash {
+    + Interact(hand : PlayerHand) : void
+  }
+
+  IInteractable <|.. Refrigerator
+  IInteractable <|.. ChoppingTable
+  IInteractable <|.. Stove
+  IInteractable <|.. CustomerWindow
+  IInteractable <|.. Trash
+
+  Stove "1" *--> "2" StoveSlot : owns
+  CustomerWindow "1" *--> "0..1" OrderView : owns
+  OrderView "1" --> "1" Order : holds
+  CustomerWindow ..> OrderFactory : uses
+  Refrigerator ..> IngredientView : instantiates
+}
+
+' ─── UI ───────────────────────────────────────────────────────────────────────
+package "UI" {
+
+  class HUD {
+    ' Score, HighScore, countdown, pause button, quit button
+  }
+
+  class WindowUI {
+    ' Required ingredient types + elapsed order timer per window
+  }
+
+  class StationProgressUI {
+    ' Progress bar for ChoppingTable and each StoveSlot
+  }
+
+  class ScorePopup {
+    ' Displays "+N" / "-N" near window then fades
+  }
+
+  class GameOverUI {
+    ' Play Again button, New High Score message
+  }
+}
+
+' ─── Cross-package wiring ─────────────────────────────────────────────────────
+PlayerHand "1" --> "0..1" IngredientView : holds
+
+@enduml

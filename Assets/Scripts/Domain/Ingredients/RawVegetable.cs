@@ -1,9 +1,6 @@
 using UnityEngine;
 
-namespace YesChef.Domain
+public class RawVegetable : MonoBehaviour, IIngredient
 {
-    public class RawVegetable : MonoBehaviour, IIngredient
-    {
-        public int ScoreValue => 20;
-    }
+    public int ScoreValue => 20;
 }

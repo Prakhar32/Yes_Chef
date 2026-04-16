@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
-using YesChef.Domain;
 
 public class StoveSlotTests
 {

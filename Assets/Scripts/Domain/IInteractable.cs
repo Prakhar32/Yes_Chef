@@ -1,7 +1,4 @@
-namespace YesChef.Domain
+public interface IInteractable
 {
-    public interface IInteractable
-    {
-        void Interact(PlayerHand hand);
-    }
+    void Interact(PlayerHand hand);
 }

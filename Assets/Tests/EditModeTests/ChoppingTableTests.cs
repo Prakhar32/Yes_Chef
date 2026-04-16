@@ -1,8 +1,6 @@
 using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
-using YesChef.Domain;
-
 public class ChoppingTableTests
 {
     private readonly List<GameObject> _created = new List<GameObject>();

@@ -1,24 +1,21 @@
-namespace YesChef.Domain
+public class PlayerHand
 {
-    public class PlayerHand
+    public IIngredient Held { get; private set; }
+
+    public bool TryPickUp(IIngredient ingredient)
     {
-        public IIngredient Held { get; private set; }
+        if (Held != null) return false;
+        Held = ingredient;
+        return true;
+    }
 
-        public bool TryPickUp(IIngredient ingredient)
-        {
-            if (Held != null) return false;
-            Held = ingredient;
-            return true;
-        }
+    public void Place()
+    {
+        Held = null;
+    }
 
-        public void Place()
-        {
-            Held = null;
-        }
-
-        public void Discard()
-        {
-            Held = null;
-        }
+    public void Discard()
+    {
+        Held = null;
     }
 }

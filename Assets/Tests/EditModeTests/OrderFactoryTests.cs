@@ -1,6 +1,4 @@
 using NUnit.Framework;
-using YesChef.Domain;
-
 public class OrderFactoryTests
 {
     [Test]

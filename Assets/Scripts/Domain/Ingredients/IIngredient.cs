@@ -1,7 +1,4 @@
-namespace YesChef.Domain
+public interface IIngredient
 {
-    public interface IIngredient
-    {
-        int ScoreValue { get; }
-    }
+    int ScoreValue { get; }
 }

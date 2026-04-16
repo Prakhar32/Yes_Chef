@@ -5,46 +5,33 @@ namespace YesChef.Domain
 {
     public sealed class Order
     {
-        private readonly Dictionary<Type, int> _requirements;
-        private readonly int _totalScore;
+        private readonly List<Type> _pending;
 
-        public IReadOnlyDictionary<Type, int> Requirements => _requirements;
+        public IReadOnlyCollection<Type> Pending => _pending.AsReadOnly();
+        public int Score { get; }
+        public bool IsComplete => _pending.Count == 0;
 
-        public Order(IIngredient[] ingredients)
+        public Order(Type[] types)
         {
-            _requirements = new Dictionary<Type, int>();
-            _totalScore = 0;
-            foreach (var ingredient in ingredients)
-            {
-                var type = ingredient.GetType();
-                _requirements.TryGetValue(type, out int count);
-                _requirements[type] = count + 1;
-                _totalScore += ingredient.ScoreValue;
-            }
+            foreach (var type in types)
+                if (!typeof(IIngredient).IsAssignableFrom(type))
+                    throw new ArgumentException($"{type.Name} does not implement IIngredient");
+            _pending = new List<Type>(types);
+            Score = 0;
         }
 
-        private Order(Dictionary<Type, int> requirements, int totalScore)
+        private Order(List<Type> pending, int score)
         {
-            _requirements = requirements;
-            _totalScore = totalScore;
+            _pending = pending;
+            Score = score;
         }
 
         public Order Receive(IIngredient ingredient)
         {
             var type = ingredient.GetType();
-            if (!_requirements.TryGetValue(type, out int count))
-                return this;
-
-            var updated = new Dictionary<Type, int>(_requirements);
-            if (count == 1)
-                updated.Remove(type);
-            else
-                updated[type] = count - 1;
-
-            return new Order(updated, _totalScore - ingredient.ScoreValue);
+            var updated = new List<Type>(_pending);
+            if (!updated.Remove(type)) return this;
+            return new Order(updated, Score + ingredient.ScoreValue);
         }
-
-        public int CalculateScore(float elapsedSeconds) =>
-            _totalScore - (int)Math.Floor(elapsedSeconds);
     }
 }

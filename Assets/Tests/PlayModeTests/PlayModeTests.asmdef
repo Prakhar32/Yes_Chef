@@ -1,5 +1,8 @@
 {
     "name": "PlayModeTests",
+    "references": [
+        "YesChef.Domain"
+    ],
     "optionalUnityReferences": [
         "TestAssemblies"
     ]

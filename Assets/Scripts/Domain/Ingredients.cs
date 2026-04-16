@@ -1,3 +1,5 @@
+using UnityEngine;
+
 namespace YesChef.Domain
 {
     public interface IIngredient
@@ -5,28 +7,9 @@ namespace YesChef.Domain
         int ScoreValue { get; }
     }
 
-    public sealed class RawVegetable : IIngredient
-    {
-        public int ScoreValue => 20;
-    }
-
-    public sealed class ChoppedVegetable : IIngredient
-    {
-        public int ScoreValue => 20;
-    }
-
-    public sealed class RawMeat : IIngredient
-    {
-        public int ScoreValue => 30;
-    }
-
-    public sealed class CookedMeat : IIngredient
-    {
-        public int ScoreValue => 30;
-    }
-
-    public sealed class RawCheese : IIngredient
-    {
-        public int ScoreValue => 10;
-    }
+    public class RawVegetable : MonoBehaviour, IIngredient { public int ScoreValue => 20; }
+    public class ChoppedVegetable : MonoBehaviour, IIngredient { public int ScoreValue => 20; }
+    public class RawMeat : MonoBehaviour, IIngredient { public int ScoreValue => 30; }
+    public class CookedMeat : MonoBehaviour, IIngredient { public int ScoreValue => 30; }
+    public class RawCheese : MonoBehaviour, IIngredient { public int ScoreValue => 10; }
 }

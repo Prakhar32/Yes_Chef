@@ -6,16 +6,17 @@ skinparam classAttributeIconSize 0
 ' ─── Domain ───────────────────────────────────────────────────────────────────
 package "Domain" {
 
-  note as N1
-    Ingredients are **value objects**.
-    The customer wants "a cooked meat",
-    not "this specific cooked meat".
-    Two CookedMeat instances are interchangeable.
-  end note
-
   interface IIngredient {
     + ScoreValue : int
   }
+
+  note right of IIngredient
+    Concrete types are MonoBehaviours.
+    Each class encodes both kind and state.
+    RawMeat → CookedMeat via cooking.
+    ChoppedVegetable → ChoppedVegetable (no further state).
+    Type identity IS ingredient identity.
+  end note
 
   class RawVegetable {
     + ScoreValue : int = 20
@@ -44,31 +45,32 @@ package "Domain" {
   IIngredient <|.. RawCheese
 
   class Order {
-    + Requirements : IReadOnlyDictionary<Type, int>
+    + Pending : IReadOnlyCollection<Type>
+    + Score : int
     + Receive(ingredient : IIngredient) : Order
-    + CalculateScore(elapsedSeconds : float) : int
+    + IsComplete : bool
   }
 
   note right of Order
-    Immutable value object.
-    WithDelivered returns a new Order with the
-    matching ingredient removed, or the same
-    instance if no match found.
-    IsDelivered when Requirements is empty.
-    Score = sum(ScoreValues) − floor(elapsedSeconds)
-    Score may be negative.
+    Pure C# value object. Immutable.
+    Receive() returns a new Order with one
+    matching Type removed from Pending, and
+    ScoreValue added to Score.
+    Returns same instance if no match found.
+    IsComplete when Pending is empty.
+    Identity belongs to CustomerWindow, not Order.
   end note
 
-  Order ..> IIngredient : validates
+  Order ..> IIngredient : receives
 
   class OrderFactory {
     + CreateRandom() : Order
   }
 
   note bottom of OrderFactory
-    Generates 2- or 3-ingredient orders (50/50).
-    Requirements are always the fulfilled types.
-    Duplicate ingredient types allowed.
+    Holds a pool of Type objects — no instances.
+    Picks 2 or 3 types at random (50/50).
+    Duplicate types allowed.
   end note
 
   OrderFactory ..> Order : creates
@@ -111,20 +113,21 @@ package "Core" {
 package "Player" {
 
   class PlayerController {
-    ' New Input System: Move (Vector2), Interact (Button), Pause (Button)
+    ' New Input System: Move (Vector2), Interact (Button), Pause (Button), Cancel (Button)
+    - inSelectionContext : bool
   }
 
   class PlayerHand {
-    - held : IngredientView
-    + TryPickUp(view : IngredientView) : bool
-    + Drop() : void
+    - held : IIngredient
+    + TryPickUp(ingredient : IIngredient) : bool
+    + Place() : void
     + Discard() : void
   }
 
   note bottom of PlayerHand
     Enforces single-item hold.
     TryPickUp returns false when occupied.
-    Holds IngredientView (the entity), not the value.
+    Holds the physical ingredient entity.
   end note
 
   PlayerController "1" --> "1" PlayerHand : owns
@@ -137,50 +140,55 @@ package "Interactables" {
     + Interact(hand : PlayerHand) : void
   }
 
-  class IngredientView {
-    - current : IIngredient
-    + Set(ingredient : IIngredient) : void
-    + Current : IIngredient
-  }
-
-  note right of IngredientView
-    Scene entity — has identity as a GameObject.
-    Set() replaces the value object and syncs visuals.
-    Visual sync switches on concrete type — no string keys.
-  end note
-
-  IngredientView --> IIngredient : holds
-
   class Refrigerator {
     + Interact(hand : PlayerHand) : void
   }
 
   note bottom of Refrigerator
-    Instantiates IngredientView with a random
-    raw ingredient value and gives it to PlayerHand.
+    On interact: opens RefrigeratorUI.
+    Rejects interact when hand is occupied.
+    Instantiates the selected ingredient prefab
+    and calls hand.TryPickUp.
+  end note
+
+  class RefrigeratorUI {
+    + Open() : void
+    + Close() : void
+    - selectedIndex : int
+    + event OnIngredientSelected(ingredient : IIngredient)
+    + event OnCancelled
+  }
+
+  note right of RefrigeratorUI
+    World-space Canvas. 4 items: RawVegetable,
+    RawMeat, RawCheese, Back.
+    Move input navigates selection.
+    Interact confirms. Cancel or Back item closes.
   end note
 
   class ChoppingTable {
     - timer : float
-    - occupant : IngredientView
+    - occupant : IIngredient
     + Interact(hand : PlayerHand) : void
   }
 
   note bottom of ChoppingTable
-    Accepts IngredientView whose Current is RawVegetable.
-    On timer complete: calls occupant.Set(new ChoppedVegetable()).
+    Accepts RawVegetable.
+    On timer complete: destroys occupant,
+    instantiates ChoppedVegetable in its place.
     Blocks pickup until complete.
   end note
 
   class StoveSlot {
     - timer : float
-    - occupant : IngredientView
+    - occupant : IIngredient
     + Interact(hand : PlayerHand) : void
   }
 
   note bottom of StoveSlot
-    Accepts IngredientView whose Current is RawMeat.
-    On timer complete: calls occupant.Set(new CookedMeat()).
+    Accepts RawMeat.
+    On timer complete: destroys occupant,
+    instantiates CookedMeat in its place.
     Timer continues while player is away.
   end note
 
@@ -194,30 +202,22 @@ package "Interactables" {
     Rejects when both slots full.
   end note
 
-  class OrderView {
-    - currentOrder : Order
-    - originalOrder : Order
-    - elapsed : float
-    + Deliver(ingredient : IIngredient) : void
-    + event OnDelivered(addedScore : int)
-  }
-
-  note right of OrderView
-    Mutable value object (MonoBehaviour).
-    Holds immutable Order; replaces it via
-    WithDelivered on each delivery.
-    Announces completion with added score,
-    then destroys itself.
-  end note
-
   class CustomerWindow {
+    - order : Order
+    - elapsed : float
     + Interact(hand : PlayerHand) : void
+    + event OnOrderFulfilled(score : int)
   }
 
-  note bottom of CustomerWindow
-    Entity. Owns OrderView.
-    On OrderView.OnDelivered: displays score popup,
-    notifies ScoreManager, seats new customer.
+  note right of CustomerWindow
+    Entity. Persists across customers.
+    Owns the current Order (value object).
+    On Interact: takes ingredient from hand,
+    calls order.Receive() — replaces order
+    with the returned instance.
+    When IsComplete: fires OnOrderFulfilled,
+    notifies ScoreManager, spawns new Order.
+    UI reflects current Order state.
   end note
 
   class Trash {
@@ -231,10 +231,8 @@ package "Interactables" {
   IInteractable <|.. Trash
 
   Stove "1" *--> "2" StoveSlot : owns
-  CustomerWindow "1" *--> "0..1" OrderView : owns
-  OrderView "1" --> "1" Order : holds
   CustomerWindow ..> OrderFactory : uses
-  Refrigerator ..> IngredientView : instantiates
+  CustomerWindow --> Order : holds
 }
 
 ' ─── UI ───────────────────────────────────────────────────────────────────────
@@ -245,7 +243,7 @@ package "UI" {
   }
 
   class WindowUI {
-    ' Required ingredient types + elapsed order timer per window
+    ' Displays Pending types + elapsed timer for a CustomerWindow
   }
 
   class StationProgressUI {
@@ -262,6 +260,6 @@ package "UI" {
 }
 
 ' ─── Cross-package wiring ─────────────────────────────────────────────────────
-PlayerHand "1" --> "0..1" IngredientView : holds
+PlayerHand "1" --> "0..1" IIngredient : holds
 
 @enduml

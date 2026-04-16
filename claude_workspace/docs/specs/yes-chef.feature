@@ -27,14 +27,36 @@ Feature: Yes Chef! - Kitchen Cooking Game
     Then the player character moves in the corresponding direction
     And the player is constrained within the kitchen walls
 
-  Scenario: Player picks up an ingredient from the refrigerator
+  Scenario: Player opens ingredient selection menu at the refrigerator
     Given the player is holding nothing
     And the player is adjacent to the refrigerator
     When the player interacts with the refrigerator
-    Then the player picks up a raw ingredient
-    And the ingredient is visibly held by the player
+    Then a world-space ingredient selection menu appears near the refrigerator
+    And the menu shows 3 ingredient options and a Back option
+    And the player enters selection context (cannot move)
 
-  Scenario: Player cannot pick up an ingredient while already holding one
+  Scenario: Player selects an ingredient from the refrigerator menu
+    Given the ingredient selection menu is open
+    When the player navigates to an ingredient option and confirms
+    Then the player receives that ingredient in hand
+    And the ingredient is visibly held by the player
+    And the menu closes
+    And the player exits selection context
+
+  Scenario: Player cancels the refrigerator menu
+    Given the ingredient selection menu is open
+    When the player presses the Cancel button or selects Back
+    Then the menu closes
+    And the player exits selection context
+    And the player's hand remains empty
+
+  Scenario: Player navigates the refrigerator menu using movement keys
+    Given the ingredient selection menu is open
+    When the player provides movement input
+    Then the menu selection highlight moves accordingly
+    And the player character does not move
+
+  Scenario: Player cannot open refrigerator menu while already holding one
     Given the player is holding an ingredient
     And the player is adjacent to the refrigerator
     When the player interacts with the refrigerator

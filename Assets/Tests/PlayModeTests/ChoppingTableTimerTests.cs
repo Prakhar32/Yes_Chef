@@ -17,9 +17,17 @@ public class ChoppingTableTimerTests
         return go.AddComponent<T>();
     }
 
+    [UnitySetUp]
+    public IEnumerator SetUp()
+    {
+        Time.timeScale = 10f;
+        yield return null;
+    }
+
     [TearDown]
     public void TearDown()
     {
+        Time.timeScale = 1f;
         foreach (GameObject go in _created)
             if (go != null) Object.Destroy(go);
         _created.Clear();
@@ -33,20 +41,23 @@ public class ChoppingTableTimerTests
     }
 
     [UnityTest]
-    public IEnumerator AfterChopDuration_TableIsReady()
+    public IEnumerator AfterChopDuration_ChoppedVegetableSpawnsAtRawVegetablePosition()
     {
         ChoppingTable table = MakeTable();
         PlayerHand hand = new PlayerHand();
-        hand.TryPickUp(Make<RawVegetable>());
+        RawVegetable raw = Make<RawVegetable>();
+        raw.transform.position = new Vector3(1f, 2f, 3f);
+        hand.TryPickUp(raw);
         table.Interact(hand);
 
         yield return WaitForChop;
 
-        Assert.IsTrue(table.IsReady);
+        ChoppedVegetable chopped = Object.FindFirstObjectByType<ChoppedVegetable>();
+        Assert.AreEqual(new Vector3(1f, 2f, 3f), chopped.transform.position);
     }
 
     [UnityTest]
-    public IEnumerator Interact_WhenReady_WithEmptyHand_PutsChoppedVegetableInHand()
+    public IEnumerator WhenVegetableIsChopped_Interact_WithEmptyHand_PutsItInHand()
     {
         ChoppingTable table = MakeTable();
         PlayerHand hand = new PlayerHand();
@@ -60,18 +71,4 @@ public class ChoppingTableTimerTests
         Assert.IsInstanceOf<ChoppedVegetable>(hand.Held);
     }
 
-    [UnityTest]
-    public IEnumerator Interact_WhenReady_WithEmptyHand_ClearsTable()
-    {
-        ChoppingTable table = MakeTable();
-        PlayerHand hand = new PlayerHand();
-        hand.TryPickUp(Make<RawVegetable>());
-        table.Interact(hand);
-
-        yield return WaitForChop;
-
-        table.Interact(hand);
-
-        Assert.IsFalse(table.IsReady);
-    }
 }

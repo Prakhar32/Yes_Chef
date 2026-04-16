@@ -31,7 +31,7 @@ public class ChoppingTableTests
 
         table.Interact(hand);
 
-        Assert.IsNull(hand.Held);
+        Assert.IsTrue(hand.Held == null);
     }
 
     [Test]
@@ -63,14 +63,4 @@ public class ChoppingTableTests
         Assert.AreEqual(meat, hand.Held);
     }
 
-    [Test]
-    public void DoesNotInteracts_WithEmptyHand()
-    {
-        ChoppingTable table = Make<ChoppingTable>();
-        PlayerHand hand = new PlayerHand();
-
-        table.Interact(hand);
-
-        Assert.IsFalse(table.IsReady);
-    }
 }

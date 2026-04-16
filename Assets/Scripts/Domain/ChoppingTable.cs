@@ -11,7 +11,7 @@ namespace YesChef.Domain
         private RawVegetable _chopping;
         private ChoppedVegetable _ready;
 
-        public bool IsReady => _ready != null;
+        private bool IsReady => _ready != null;
         private bool IsIdle => _chopping == null && _ready == null;
 
         public void Interact(PlayerHand hand)
@@ -34,9 +34,10 @@ namespace YesChef.Domain
         private IEnumerator Chop()
         {
             yield return new WaitForSeconds(Duration);
+            _chopping.transform.GetPositionAndRotation(out Vector3 position, out Quaternion rotation);
             Destroy(_chopping.gameObject);
             _chopping = null;
-            _ready = Instantiate(choppedVegetablePrefab);
+            _ready = Instantiate(choppedVegetablePrefab, position, rotation);
         }
     }
 }

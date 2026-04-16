@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &2738341772031687196
+--- !u!1 &3011792786192082833
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,25 +8,25 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 3263803483341430950}
-  - component: {fileID: 1937814943423311619}
-  - component: {fileID: 4395644238807718857}
-  - component: {fileID: 846581636032892770}
-  - component: {fileID: 5502539025717222733}
+  - component: {fileID: 2488196155509341483}
+  - component: {fileID: 1524471416633651854}
+  - component: {fileID: 3660570959980496452}
+  - component: {fileID: 9121976966657432513}
+  - component: {fileID: 1486951339933302270}
   m_Layer: 0
-  m_Name: RawVegetable
+  m_Name: ChoppingTable
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &3263803483341430950
+--- !u!4 &2488196155509341483
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2738341772031687196}
+  m_GameObject: {fileID: 3011792786192082833}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -0, y: 0, z: 0}
@@ -35,21 +35,21 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &1937814943423311619
+--- !u!33 &1524471416633651854
 MeshFilter:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2738341772031687196}
-  m_Mesh: {fileID: 5644437864633722967, guid: 9e1f94b791e4c4147a96182275f39d5f, type: 3}
---- !u!23 &4395644238807718857
+  m_GameObject: {fileID: 3011792786192082833}
+  m_Mesh: {fileID: 8522854607511772865, guid: 077cd2d02327d1c4f8e7e945e7920950, type: 3}
+--- !u!23 &3660570959980496452
 MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2738341772031687196}
+  m_GameObject: {fileID: 3011792786192082833}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -92,13 +92,13 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &846581636032892770
-MeshCollider:
+--- !u!65 &9121976966657432513
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2738341772031687196}
+  m_GameObject: {fileID: 3011792786192082833}
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -110,19 +110,19 @@ MeshCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 1
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 5644437864633722967, guid: 9e1f94b791e4c4147a96182275f39d5f, type: 3}
---- !u!114 &5502539025717222733
+  serializedVersion: 3
+  m_Size: {x: 1.8000008, y: 1.1403136, z: 0.76701486}
+  m_Center: {x: 0.000000059604645, y: 0.5634365, z: -0.016492665}
+--- !u!114 &1486951339933302270
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2738341772031687196}
+  m_GameObject: {fileID: 3011792786192082833}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
+  m_Script: {fileID: 11500000, guid: 18fa146b2a983ef4eb7e2f71da492bb7, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: YesChef.Domain::YesChef.Domain.RawVegetable
+  m_EditorClassIdentifier: YesChef.Domain::YesChef.Domain.ChoppingTable
+  choppedVegetablePrefab: {fileID: 0}

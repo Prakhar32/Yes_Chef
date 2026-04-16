@@ -3,4 +3,5 @@
   <Project Path="YesChef.Domain.csproj" />
   <Project Path="EditModeTests.csproj" />
   <Project Path="Assembly-CSharp.csproj" />
+  <Project Path="PlayModeTests.csproj" />
 </Solution>

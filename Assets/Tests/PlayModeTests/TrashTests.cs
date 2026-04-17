@@ -1,6 +1,8 @@
+using System.Collections;
 using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
+using UnityEngine.TestTools;
 
 public class TrashTests
 {
@@ -17,12 +19,12 @@ public class TrashTests
     public void TearDown()
     {
         foreach (GameObject go in _created)
-            Object.DestroyImmediate(go);
+            if (go != null) Object.Destroy(go);
         _created.Clear();
     }
 
-    [Test]
-    public void WhenHoldingIngredient_Interact_CollectsIngredient()
+    [UnityTest]
+    public IEnumerator WhenHoldingIngredient_Interact_CollectsIngredient()
     {
         Trash trash = Make<Trash>();
         PlayerHand hand = new PlayerHand();
@@ -30,6 +32,8 @@ public class TrashTests
 
         trash.Interact(hand);
 
-        Assert.IsTrue(hand.Held == null);
+        yield return null;
+
+        Assert.IsNull(hand.Held);
     }
 }

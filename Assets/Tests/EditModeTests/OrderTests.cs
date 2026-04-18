@@ -26,7 +26,7 @@ public class OrderTests
     {
         Order order = new Order(new[] { typeof(ChoppedVegetable), typeof(RawCheese) });
         Order updated = order.Receive(Make<ChoppedVegetable>());
-        Assert.AreEqual(1, updated.Pending.Count);
+        Assert.IsFalse(updated.IsComplete);
     }
 
     [Test]
@@ -34,7 +34,7 @@ public class OrderTests
     {
         Order order = new Order(new[] { typeof(ChoppedVegetable) });
         Order updated = order.Receive(Make<RawVegetable>());
-        Assert.AreEqual(1, updated.Pending.Count);
+        Assert.IsFalse(updated.IsComplete);
     }
 
     [Test]
@@ -42,7 +42,7 @@ public class OrderTests
     {
         Order order = new Order(new[] { typeof(RawCheese) });
         Order updated = order.Receive(Make<CookedMeat>());
-        Assert.AreEqual(1, updated.Pending.Count);
+        Assert.IsFalse(updated.IsComplete);
     }
 
     [Test]
@@ -50,9 +50,9 @@ public class OrderTests
     {
         Order order = new Order(new[] { typeof(RawCheese), typeof(RawCheese) });
         Order afterFirst = order.Receive(Make<RawCheese>());
-        Assert.AreNotEqual(0, afterFirst.Pending.Count);
+        Assert.IsFalse(afterFirst.IsComplete);
         Order afterSecond = afterFirst.Receive(Make<RawCheese>());
-        Assert.AreEqual(0, afterSecond.Pending.Count);
+        Assert.IsTrue(afterSecond.IsComplete);
     }
 
     [Test]

@@ -5,7 +5,6 @@ public sealed class Order
 {
     private readonly List<Type> _pending;
 
-    public IReadOnlyCollection<Type> Pending => _pending.AsReadOnly();
     public int Score { get; }
     public bool IsComplete => _pending.Count == 0;
 

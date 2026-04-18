@@ -5,6 +5,6 @@ public class OrderFactoryTests
     public void CreateRandom_ReturnsUndeliveredOrder()
     {
         Order order = OrderFactory.CreateRandom();
-        Assert.AreNotEqual(0, order.Pending.Count);
+        Assert.IsFalse(order.IsComplete);
     }
 }

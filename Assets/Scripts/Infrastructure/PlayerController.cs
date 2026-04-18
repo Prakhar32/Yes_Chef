@@ -8,20 +8,25 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private InputAction _move;
     [SerializeField] private InputAction _interact;
 
-    private readonly PlayerHand _hand = new PlayerHand();
     private IInteractable _nearby;
     private Rigidbody _rb;
 
-    private void Awake() => _rb = GetComponent<Rigidbody>();
+    private void Awake()
+    {
+        _rb = GetComponent<Rigidbody>();
+    }
 
-    private void OnEnable()
+    private void OnEnable() => EnableControls();
+    private void OnDisable() => DisableControls();
+
+    public void EnableControls()
     {
         _move.Enable();
         _interact.Enable();
         _interact.performed += OnInteract;
     }
 
-    private void OnDisable()
+    public void DisableControls()
     {
         _move.Disable();
         _interact.Disable();
@@ -35,17 +40,18 @@ public class PlayerController : MonoBehaviour
         _rb.MovePosition(_rb.position + move);
     }
 
-    private void OnInteract(InputAction.CallbackContext _) => _nearby?.Interact(_hand);
+    private void OnInteract(InputAction.CallbackContext _)
+    {
+        _nearby?.Interact();
+    }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (_nearby == null)
-            _nearby = other.GetComponentInParent<IInteractable>();
+        _nearby = other.GetComponentInParent<IInteractable>();
     }
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.GetComponentInParent<IInteractable>() == _nearby)
-            _nearby = null;
+        _nearby = null;
     }
 }

@@ -8,23 +8,34 @@ public class StoveSlot : MonoBehaviour, IInteractable
     private const float Duration = 6f;
     private RawMeat _cooking;
     private CookedMeat _ready;
+    private PlayerHand _hand;
 
     private bool IsReady => _ready != null;
     private bool IsIdle => _cooking == null && _ready == null;
 
-    public void Interact(PlayerHand hand)
+    private void Start()
     {
-        if (IsReady && hand.Held == null)
+        _hand = FindFirstObjectByType<PlayerHand>();
+        if (_hand == null)
         {
-            hand.TryPickUp(_ready);
+            Destroy(gameObject);
+            throw new MissingComponentException($"{nameof(PlayerHand)} not found in scene.");
+        }
+    }
+
+    public void Interact()
+    {
+        if (IsReady && _hand.Held == null)
+        {
+            _hand.TryPickUp(_ready);
             _ready = null;
             return;
         }
 
-        if (IsIdle && hand.Held is RawMeat raw)
+        if (IsIdle && _hand.Held is RawMeat raw)
         {
             _cooking = raw;
-            hand.Place();
+            _hand.Place();
             _cooking.transform.position = transform.position;
             StartCoroutine(Cook());
         }

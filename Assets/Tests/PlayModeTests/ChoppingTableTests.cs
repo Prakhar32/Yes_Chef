@@ -1,7 +1,9 @@
+using System.Collections;
 using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
+using UnityEngine.TestTools;
 
 public class ChoppingTableTests
 {
@@ -21,47 +23,51 @@ public class ChoppingTableTests
     public void TearDown()
     {
         foreach (GameObject go in _created)
-            if (go != null) Object.DestroyImmediate(go);
+            if (go != null) Object.Destroy(go);
         _created.Clear();
     }
 
-    [Test]
-    public void Interact_WithRawVegetableInHand_EmptiesHand()
+    [UnityTest]
+    public IEnumerator Interact_WithRawVegetableInHand_EmptiesHand()
     {
-        ChoppingTable table = Spawn("ChoppingTable").GetComponent<ChoppingTable>();
         PlayerHand hand = Spawn("Player").GetComponentInChildren<PlayerHand>();
-        hand.TryPickUp(Spawn("RawVegetable").GetComponent<RawVegetable>());
+        ChoppingTable table = Spawn("ChoppingTable").GetComponent<ChoppingTable>();
+        yield return null;
 
-        table.Interact(hand);
+        hand.TryPickUp(Spawn("RawVegetable").GetComponent<RawVegetable>());
+        table.Interact();
 
         Assert.IsNull(hand.Held);
     }
 
-    [Test]
-    public void Interact_WhileChopping_DoesNotTakeNewIngredient()
+    [UnityTest]
+    public IEnumerator Interact_WhileChopping_DoesNotTakeNewIngredient()
     {
-        ChoppingTable table = Spawn("ChoppingTable").GetComponent<ChoppingTable>();
         PlayerHand firstHand = Spawn("Player").GetComponentInChildren<PlayerHand>();
+        ChoppingTable table = Spawn("ChoppingTable").GetComponent<ChoppingTable>();
+        yield return null;
+
         firstHand.TryPickUp(Spawn("RawVegetable").GetComponent<RawVegetable>());
-        table.Interact(firstHand);
+        table.Interact();
 
         PlayerHand secondHand = Spawn("Player").GetComponentInChildren<PlayerHand>();
         RawVegetable secondVeg = Spawn("RawVegetable").GetComponent<RawVegetable>();
         secondHand.TryPickUp(secondVeg);
-        table.Interact(secondHand);
+        table.Interact();
 
         Assert.IsNotNull(secondHand.Held);
     }
 
-    [Test]
-    public void OnlyInteracts_WithRawVegetable()
+    [UnityTest]
+    public IEnumerator OnlyInteracts_WithRawVegetable()
     {
-        ChoppingTable table = Spawn("ChoppingTable").GetComponent<ChoppingTable>();
         PlayerHand hand = Spawn("Player").GetComponentInChildren<PlayerHand>();
+        ChoppingTable table = Spawn("ChoppingTable").GetComponent<ChoppingTable>();
+        yield return null;
+
         RawMeat meat = Spawn("RawMeat").GetComponent<RawMeat>();
         hand.TryPickUp(meat);
-
-        table.Interact(hand);
+        table.Interact();
 
         Assert.AreSame(meat, hand.Held);
     }

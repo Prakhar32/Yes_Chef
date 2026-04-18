@@ -30,11 +30,12 @@ public class TrashTests
     [UnityTest]
     public IEnumerator WhenHoldingIngredient_Interact_CollectsIngredient()
     {
-        Trash trash = Spawn("Trash").GetComponent<Trash>();
         PlayerHand hand = Spawn("Player").GetComponentInChildren<PlayerHand>();
-        hand.TryPickUp(Spawn("RawVegetable").GetComponent<RawVegetable>());
+        Trash trash = Spawn("Trash").GetComponent<Trash>();
+        yield return null;
 
-        trash.Interact(hand);
+        hand.TryPickUp(Spawn("RawVegetable").GetComponent<RawVegetable>());
+        trash.Interact();
 
         yield return null;
 

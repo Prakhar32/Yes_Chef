@@ -8,23 +8,34 @@ public class ChoppingTable : MonoBehaviour, IInteractable
     private const float Duration = 2f;
     private RawVegetable _chopping;
     private ChoppedVegetable _ready;
+    private PlayerHand _hand;
 
     private bool IsReady => _ready != null;
     private bool IsIdle => _chopping == null && _ready == null;
 
-    public void Interact(PlayerHand hand)
+    private void Start()
     {
-        if (IsReady && hand.Held == null)
+        _hand = FindFirstObjectByType<PlayerHand>();
+        if (_hand == null)
         {
-            hand.TryPickUp(_ready);
+            Destroy(gameObject);
+            throw new MissingComponentException($"{nameof(PlayerHand)} not found in scene.");
+        }
+    }
+
+    public void Interact()
+    {
+        if (IsReady && _hand.Held == null)
+        {
+            _hand.TryPickUp(_ready);
             _ready = null;
             return;
         }
 
-        if (IsIdle && hand.Held is RawVegetable raw)
+        if (IsIdle && _hand.Held is RawVegetable raw)
         {
             _chopping = raw;
-            hand.Place();
+            _hand.Place();
             _chopping.transform.position = transform.position;
             StartCoroutine(Chop());
         }

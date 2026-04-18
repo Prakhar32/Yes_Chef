@@ -11,8 +11,8 @@ GameObject:
   - component: {fileID: 7706439381206155102}
   - component: {fileID: 6727566799414538491}
   - component: {fileID: 8843355623140639793}
-  - component: {fileID: 7657959904922306582}
   - component: {fileID: 7514931116482117409}
+  - component: {fileID: 828507770593746578}
   m_Layer: 0
   m_Name: ChoppedVegetable
   m_TagString: Untagged
@@ -92,8 +92,20 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &7657959904922306582
-MeshCollider:
+--- !u!114 &7514931116482117409
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7041683020158330340}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b89492e42b6929344bec181b213417ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: YesChef.Domain::YesChef.Domain.ChoppedVegetable
+--- !u!65 &828507770593746578
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -110,19 +122,6 @@ MeshCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 1
-  m_CookingOptions: 30
-  m_Mesh: {fileID: -8775840353042319581, guid: 8ff312420ed65474da93634aceceefc1, type: 3}
---- !u!114 &7514931116482117409
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7041683020158330340}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b89492e42b6929344bec181b213417ab, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: YesChef.Domain::YesChef.Domain.ChoppedVegetable
+  serializedVersion: 3
+  m_Size: {x: 0.29179525, y: 0.13218822, z: 0.17655088}
+  m_Center: {x: 0.0045761093, y: 0.054207228, z: -0.000000007450581}

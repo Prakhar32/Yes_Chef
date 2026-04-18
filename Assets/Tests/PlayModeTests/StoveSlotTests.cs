@@ -1,7 +1,9 @@
+using System.Collections;
 using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
+using UnityEngine.TestTools;
 
 public class StoveSlotTests
 {
@@ -21,46 +23,50 @@ public class StoveSlotTests
     public void TearDown()
     {
         foreach (GameObject go in _created)
-            if (go != null) Object.DestroyImmediate(go);
+            if (go != null) Object.Destroy(go);
         _created.Clear();
     }
 
-    [Test]
-    public void Interact_WithRawMeatInHand_EmptiesHand()
+    [UnityTest]
+    public IEnumerator Interact_WithRawMeatInHand_EmptiesHand()
     {
-        StoveSlot slot = Spawn("Stove").GetComponentInChildren<StoveSlot>();
         PlayerHand hand = Spawn("Player").GetComponentInChildren<PlayerHand>();
-        hand.TryPickUp(Spawn("RawMeat").GetComponent<RawMeat>());
+        StoveSlot slot = Spawn("Stove").GetComponentInChildren<StoveSlot>();
+        yield return null;
 
-        slot.Interact(hand);
+        hand.TryPickUp(Spawn("RawMeat").GetComponent<RawMeat>());
+        slot.Interact();
 
         Assert.IsNull(hand.Held);
     }
 
-    [Test]
-    public void Interact_WhileCooking_DoesNotTakeNewIngredient()
+    [UnityTest]
+    public IEnumerator Interact_WhileCooking_DoesNotTakeNewIngredient()
     {
-        StoveSlot slot = Spawn("Stove").GetComponentInChildren<StoveSlot>();
         PlayerHand firstHand = Spawn("Player").GetComponentInChildren<PlayerHand>();
+        StoveSlot slot = Spawn("Stove").GetComponentInChildren<StoveSlot>();
+        yield return null;
+
         firstHand.TryPickUp(Spawn("RawMeat").GetComponent<RawMeat>());
-        slot.Interact(firstHand);
+        slot.Interact();
 
         PlayerHand secondHand = Spawn("Player").GetComponentInChildren<PlayerHand>();
         secondHand.TryPickUp(Spawn("RawMeat").GetComponent<RawMeat>());
-        slot.Interact(secondHand);
+        slot.Interact();
 
         Assert.IsNotNull(secondHand.Held);
     }
 
-    [Test]
-    public void Interact_WithNonRawMeatInHand_DoesNotTakeIngredient()
+    [UnityTest]
+    public IEnumerator Interact_WithNonRawMeatInHand_DoesNotTakeIngredient()
     {
-        StoveSlot slot = Spawn("Stove").GetComponentInChildren<StoveSlot>();
         PlayerHand hand = Spawn("Player").GetComponentInChildren<PlayerHand>();
+        StoveSlot slot = Spawn("Stove").GetComponentInChildren<StoveSlot>();
+        yield return null;
+
         RawVegetable veg = Spawn("RawVegetable").GetComponent<RawVegetable>();
         hand.TryPickUp(veg);
-
-        slot.Interact(hand);
+        slot.Interact();
 
         Assert.AreSame(veg, hand.Held);
     }

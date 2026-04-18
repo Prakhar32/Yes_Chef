@@ -2,12 +2,24 @@ using UnityEngine;
 
 public class Trash : MonoBehaviour, IInteractable
 {
-    public void Interact(PlayerHand hand)
+    private PlayerHand _hand;
+
+    private void Start()
     {
-        if (hand.Held is Component ingredient)
+        _hand = FindFirstObjectByType<PlayerHand>();
+        if (_hand == null)
+        {
+            Destroy(gameObject);
+            throw new MissingComponentException($"{nameof(PlayerHand)} not found in scene.");
+        }
+    }
+
+    public void Interact()
+    {
+        if (_hand.Held is Component ingredient)
         {
             Destroy(ingredient.gameObject);
-            hand.Discard();
+            _hand.Discard();
         }
     }
 }

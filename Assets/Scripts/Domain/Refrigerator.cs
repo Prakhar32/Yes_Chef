@@ -12,10 +12,19 @@ public class Refrigerator : MonoBehaviour, IInteractable
 
     private PlayerHand _hand;
 
-    public void Interact(PlayerHand hand)
+    private void Start()
     {
-        if (hand.Held != null ) return;
-        _hand = hand;
+        _hand = FindFirstObjectByType<PlayerHand>();
+        if (_hand == null)
+        {
+            Destroy(gameObject);
+            throw new MissingComponentException($"{nameof(PlayerHand)} not found in scene.");
+        }
+    }
+
+    public void Interact()
+    {
+        if (_hand.Held != null) return;
         refrigiratorOpen.Invoke();
     }
 
@@ -23,7 +32,6 @@ public class Refrigerator : MonoBehaviour, IInteractable
     {
         IIngredient ingredient = InstantiatePrefab(type);
         _hand.TryPickUp(ingredient);
-        _hand = null;
     }
 
     private IIngredient InstantiatePrefab(Type type)

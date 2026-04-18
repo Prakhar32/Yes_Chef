@@ -53,8 +53,8 @@ public class RefrigiratorUI : MonoBehaviour
     private void Close()
     {
         _panel.SetActive(false);
-        controller.EnableControls();
         DisableUIControls();
+        controller.EnableControls();
     }
 
     private void EnableUIControls()
@@ -67,10 +67,10 @@ public class RefrigiratorUI : MonoBehaviour
 
     private void DisableUIControls()
     {
-        _navigate.Disable();
-        _confirm.Disable();
         _navigate.performed -= OnNavigate;
         _confirm.performed -= OnConfirm;
+        _navigate.Disable();
+        _confirm.Disable();
     }
 
     private void OnConfirm(InputAction.CallbackContext _)

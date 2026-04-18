@@ -39,11 +39,13 @@ public class StoveSlotTimerTests
     [UnityTest]
     public IEnumerator AfterCookDuration_CookedMeatSpawnsAtSlotPosition()
     {
-        StoveSlot slot = Spawn("Stove").GetComponentInChildren<StoveSlot>();
-        slot.transform.position = new Vector3(1f, 0f, 2f);
         PlayerHand hand = Spawn("Player").GetComponentInChildren<PlayerHand>();
+        StoveSlot slot = Spawn("Stove").GetComponentInChildren<StoveSlot>();
+        yield return null;
+
+        slot.transform.position = new Vector3(1f, 0f, 2f);
         hand.TryPickUp(Spawn("RawMeat").GetComponent<RawMeat>());
-        slot.Interact(hand);
+        slot.Interact();
 
         yield return WaitForCook;
 
@@ -55,14 +57,16 @@ public class StoveSlotTimerTests
     [UnityTest]
     public IEnumerator WhenMeatIsCooked_Interact_WithEmptyHand_PutsItInHand()
     {
-        StoveSlot slot = Spawn("Stove").GetComponentInChildren<StoveSlot>();
         PlayerHand hand = Spawn("Player").GetComponentInChildren<PlayerHand>();
+        StoveSlot slot = Spawn("Stove").GetComponentInChildren<StoveSlot>();
+        yield return null;
+
         hand.TryPickUp(Spawn("RawMeat").GetComponent<RawMeat>());
-        slot.Interact(hand);
+        slot.Interact();
 
         yield return WaitForCook;
 
-        slot.Interact(hand);
+        slot.Interact();
 
         Assert.IsInstanceOf<CookedMeat>(hand.Held);
     }

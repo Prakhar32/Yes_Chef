@@ -39,11 +39,13 @@ public class ChoppingTableTimerTests
     [UnityTest]
     public IEnumerator AfterChopDuration_ChoppedVegetableSpawnsAtTablePosition()
     {
-        ChoppingTable table = Spawn("ChoppingTable").GetComponent<ChoppingTable>();
-        table.transform.position = new Vector3(1f, 2f, 3f);
         PlayerHand hand = Spawn("Player").GetComponentInChildren<PlayerHand>();
+        ChoppingTable table = Spawn("ChoppingTable").GetComponent<ChoppingTable>();
+        yield return null;
+
+        table.transform.position = new Vector3(1f, 2f, 3f);
         hand.TryPickUp(Spawn("RawVegetable").GetComponent<RawVegetable>());
-        table.Interact(hand);
+        table.Interact();
 
         yield return WaitForChop;
 
@@ -55,14 +57,16 @@ public class ChoppingTableTimerTests
     [UnityTest]
     public IEnumerator WhenVegetableIsChopped_Interact_WithEmptyHand_PutsItInHand()
     {
-        ChoppingTable table = Spawn("ChoppingTable").GetComponent<ChoppingTable>();
         PlayerHand hand = Spawn("Player").GetComponentInChildren<PlayerHand>();
+        ChoppingTable table = Spawn("ChoppingTable").GetComponent<ChoppingTable>();
+        yield return null;
+
         hand.TryPickUp(Spawn("RawVegetable").GetComponent<RawVegetable>());
-        table.Interact(hand);
+        table.Interact();
 
         yield return WaitForChop;
 
-        table.Interact(hand);
+        table.Interact();
 
         Assert.IsInstanceOf<ChoppedVegetable>(hand.Held);
     }

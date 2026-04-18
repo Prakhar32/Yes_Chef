@@ -125,4 +125,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 18fa146b2a983ef4eb7e2f71da492bb7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: YesChef.Domain::YesChef.Domain.ChoppingTable
-  choppedVegetablePrefab: {fileID: 0}
+  choppedVegetablePrefab: {fileID: 7514931116482117409, guid: 48eb6cb4a41042f4cb173520abaa076e, type: 3}

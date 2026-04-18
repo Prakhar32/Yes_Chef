@@ -25,6 +25,7 @@ public class ChoppingTable : MonoBehaviour, IInteractable
         {
             _chopping = raw;
             hand.Place();
+            _chopping.transform.position = transform.position;
             StartCoroutine(Chop());
         }
     }

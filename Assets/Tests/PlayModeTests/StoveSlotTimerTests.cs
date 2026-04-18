@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 using UnityEngine.TestTools;
 
 public class StoveSlotTimerTests
@@ -9,11 +10,14 @@ public class StoveSlotTimerTests
     private readonly List<GameObject> _created = new List<GameObject>();
     private static readonly WaitForSeconds WaitForCook = new WaitForSeconds(6.1f);
 
-    private T Make<T>() where T : MonoBehaviour
+    private GameObject Spawn(string key)
     {
-        GameObject go = new GameObject();
-        _created.Add(go);
-        return go.AddComponent<T>();
+        var handle = Addressables.LoadAssetAsync<GameObject>(key);
+        handle.WaitForCompletion();
+        GameObject instance = Object.Instantiate(handle.Result);
+        Addressables.Release(handle);
+        _created.Add(instance);
+        return instance;
     }
 
     [UnitySetUp]
@@ -32,35 +36,28 @@ public class StoveSlotTimerTests
         _created.Clear();
     }
 
-    private StoveSlot MakeSlot()
-    {
-        StoveSlot slot = Make<StoveSlot>();
-        slot.cookedMeatPrefab = Make<CookedMeat>();
-        return slot;
-    }
-
     [UnityTest]
-    public IEnumerator AfterCookDuration_CookedMeatSpawnsAtRawMeatPosition()
+    public IEnumerator AfterCookDuration_CookedMeatSpawnsAtSlotPosition()
     {
-        StoveSlot slot = MakeSlot();
-        PlayerHand hand = new PlayerHand();
-        RawMeat raw = Make<RawMeat>();
-        raw.transform.position = new Vector3(1f, 0f, 2f);
-        hand.TryPickUp(raw);
+        StoveSlot slot = Spawn("Stove").GetComponentInChildren<StoveSlot>();
+        slot.transform.position = new Vector3(1f, 0f, 2f);
+        PlayerHand hand = Spawn("Player").GetComponentInChildren<PlayerHand>();
+        hand.TryPickUp(Spawn("RawMeat").GetComponent<RawMeat>());
         slot.Interact(hand);
 
         yield return WaitForCook;
 
         CookedMeat cooked = Object.FindFirstObjectByType<CookedMeat>();
+        _created.Add(cooked.gameObject);
         Assert.AreEqual(new Vector3(1f, 0f, 2f), cooked.transform.position);
     }
 
     [UnityTest]
     public IEnumerator WhenMeatIsCooked_Interact_WithEmptyHand_PutsItInHand()
     {
-        StoveSlot slot = MakeSlot();
-        PlayerHand hand = new PlayerHand();
-        hand.TryPickUp(Make<RawMeat>());
+        StoveSlot slot = Spawn("Stove").GetComponentInChildren<StoveSlot>();
+        PlayerHand hand = Spawn("Player").GetComponentInChildren<PlayerHand>();
+        hand.TryPickUp(Spawn("RawMeat").GetComponent<RawMeat>());
         slot.Interact(hand);
 
         yield return WaitForCook;
@@ -69,5 +66,4 @@ public class StoveSlotTimerTests
 
         Assert.IsInstanceOf<CookedMeat>(hand.Held);
     }
-
 }

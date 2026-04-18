@@ -25,6 +25,7 @@ public class StoveSlot : MonoBehaviour, IInteractable
         {
             _cooking = raw;
             hand.Place();
+            _cooking.transform.position = transform.position;
             StartCoroutine(Cook());
         }
     }

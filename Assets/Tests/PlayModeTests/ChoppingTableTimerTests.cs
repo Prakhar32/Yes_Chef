@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 using UnityEngine.TestTools;
 
 public class ChoppingTableTimerTests
@@ -9,11 +10,14 @@ public class ChoppingTableTimerTests
     private readonly List<GameObject> _created = new List<GameObject>();
     private static readonly WaitForSeconds WaitForChop = new WaitForSeconds(2.1f);
 
-    private T Make<T>() where T : MonoBehaviour
+    private GameObject Spawn(string key)
     {
-        GameObject go = new GameObject();
-        _created.Add(go);
-        return go.AddComponent<T>();
+        var handle = Addressables.LoadAssetAsync<GameObject>(key);
+        handle.WaitForCompletion();
+        GameObject instance = Object.Instantiate(handle.Result);
+        Addressables.Release(handle);
+        _created.Add(instance);
+        return instance;
     }
 
     [UnitySetUp]
@@ -32,35 +36,28 @@ public class ChoppingTableTimerTests
         _created.Clear();
     }
 
-    private ChoppingTable MakeTable()
-    {
-        ChoppingTable table = Make<ChoppingTable>();
-        table.choppedVegetablePrefab = Make<ChoppedVegetable>();
-        return table;
-    }
-
     [UnityTest]
-    public IEnumerator AfterChopDuration_ChoppedVegetableSpawnsAtRawVegetablePosition()
+    public IEnumerator AfterChopDuration_ChoppedVegetableSpawnsAtTablePosition()
     {
-        ChoppingTable table = MakeTable();
-        PlayerHand hand = new PlayerHand();
-        RawVegetable raw = Make<RawVegetable>();
-        raw.transform.position = new Vector3(1f, 2f, 3f);
-        hand.TryPickUp(raw);
+        ChoppingTable table = Spawn("ChoppingTable").GetComponent<ChoppingTable>();
+        table.transform.position = new Vector3(1f, 2f, 3f);
+        PlayerHand hand = Spawn("Player").GetComponentInChildren<PlayerHand>();
+        hand.TryPickUp(Spawn("RawVegetable").GetComponent<RawVegetable>());
         table.Interact(hand);
 
         yield return WaitForChop;
 
         ChoppedVegetable chopped = Object.FindFirstObjectByType<ChoppedVegetable>();
+        _created.Add(chopped.gameObject);
         Assert.AreEqual(new Vector3(1f, 2f, 3f), chopped.transform.position);
     }
 
     [UnityTest]
     public IEnumerator WhenVegetableIsChopped_Interact_WithEmptyHand_PutsItInHand()
     {
-        ChoppingTable table = MakeTable();
-        PlayerHand hand = new PlayerHand();
-        hand.TryPickUp(Make<RawVegetable>());
+        ChoppingTable table = Spawn("ChoppingTable").GetComponent<ChoppingTable>();
+        PlayerHand hand = Spawn("Player").GetComponentInChildren<PlayerHand>();
+        hand.TryPickUp(Spawn("RawVegetable").GetComponent<RawVegetable>());
         table.Interact(hand);
 
         yield return WaitForChop;
@@ -69,5 +66,4 @@ public class ChoppingTableTimerTests
 
         Assert.IsInstanceOf<ChoppedVegetable>(hand.Held);
     }
-
 }

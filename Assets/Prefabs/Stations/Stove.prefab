@@ -187,3 +187,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: YesChef.Domain::YesChef.Domain.StoveSlot
   cookedMeatPrefab: {fileID: 213443815783770000, guid: 21ea07f857e7c6b42bc03109c432c1a4, type: 3}
   _ingredientPlacement: {fileID: 0}
+  OnProcessingStarted:
+    m_PersistentCalls:
+      m_Calls: []

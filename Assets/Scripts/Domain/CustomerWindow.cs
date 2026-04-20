@@ -46,5 +46,7 @@ public class CustomerWindow : UnityEngine.MonoBehaviour, IInteractable
         OnOrderChanged(Order);
     }
 
+    public float ElapsedSeconds => _elapsedTime;
+
     public int GetScoreDelta() => Order.Score - UnityEngine.Mathf.FloorToInt(_elapsedTime);
 }

@@ -7,7 +7,8 @@ public class StoveSlot : MonoBehaviour, IInteractable
 
     [SerializeField]
     private Transform _ingredientPlacement;
-    private const float Duration = 6f;
+    public UnityEngine.Events.UnityEvent<float> OnProcessingStarted;
+
     private RawMeat _cooking;
     private CookedMeat _ready;
     private PlayerHand _hand;
@@ -39,13 +40,14 @@ public class StoveSlot : MonoBehaviour, IInteractable
             _cooking = raw;
             _hand.Place();
             _cooking.transform.position = _ingredientPlacement.position;
+            OnProcessingStarted.Invoke(GameConstants.CookingDuration);
             StartCoroutine(Cook());
         }
     }
 
     private IEnumerator Cook()
     {
-        yield return new WaitForSeconds(Duration);
+        yield return new WaitForSeconds(GameConstants.CookingDuration);
         _cooking.transform.GetPositionAndRotation(out Vector3 position, out Quaternion rotation);
         Destroy(_cooking.gameObject);
         _cooking = null;

@@ -7,7 +7,8 @@ public class ChoppingTable : MonoBehaviour, IInteractable
 
     [SerializeField]
     private Transform _ingredientPlacement;
-    private const float Duration = 2f;
+    public UnityEngine.Events.UnityEvent<float> OnProcessingStarted;
+
     private RawVegetable _chopping;
     private ChoppedVegetable _ready;
     private PlayerHand _hand;
@@ -39,13 +40,14 @@ public class ChoppingTable : MonoBehaviour, IInteractable
             _chopping = raw;
             _hand.Place();
             _chopping.transform.position = _ingredientPlacement.position;
+            OnProcessingStarted.Invoke(GameConstants.ChoppingDuration);
             StartCoroutine(Chop());
         }
     }
 
     private IEnumerator Chop()
     {
-        yield return new WaitForSeconds(Duration);
+        yield return new WaitForSeconds(GameConstants.ChoppingDuration);
         _chopping.transform.GetPositionAndRotation(out Vector3 position, out Quaternion rotation);
         Destroy(_chopping.gameObject);
         _chopping = null;

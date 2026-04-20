@@ -8,6 +8,7 @@ public class CustomerWindowUI : MonoBehaviour
 {
     [SerializeField] private CustomerWindow _window;
     [SerializeField] private TextMeshProUGUI _scoreText;
+    [SerializeField] private TextMeshProUGUI _timerText;
     [SerializeField] private Transform _ingredientsContainer;
     [SerializeField] private TextMeshProUGUI _ingredientLabelPrefab;
 
@@ -29,6 +30,12 @@ public class CustomerWindowUI : MonoBehaviour
         OnReady?.Invoke(_window);
     }
 
+    private void Update()
+    {
+        if (!_window.IsEmpty)
+            _timerText.text = Mathf.FloorToInt(_window.ElapsedSeconds).ToString();
+    }
+
     private void orderUpdated(Order order)
     {
         if(order.IsComplete)
@@ -40,6 +47,7 @@ public class CustomerWindowUI : MonoBehaviour
     private void orderRemaining(Order order)
     {
         _scoreText.gameObject.SetActive(false);
+        _timerText.gameObject.SetActive(true);
         IReadOnlyList<Type> remaining = order.GetRemainingIngredients();
         for (int i = 0; i < MaxIngredients; i++)
         {
@@ -54,6 +62,7 @@ public class CustomerWindowUI : MonoBehaviour
     {
         for (int i = 0; i < MaxIngredients; i++)
             _ingredientLabels[i].gameObject.SetActive(false);
+        _timerText.gameObject.SetActive(false);
         _scoreText.gameObject.SetActive(true);
         string sign = _window.GetScoreDelta() >= 0 ? "+" : "-";
         _scoreText.text = $"{sign}{Math.Abs(_window.GetScoreDelta())}";

@@ -39,7 +39,9 @@ public class CustomerWindow : UnityEngine.MonoBehaviour, IInteractable
         Order updated = Order.Receive(_hand.Held);
         if (updated == Order) return;
 
+        UnityEngine.MonoBehaviour ingredient = (UnityEngine.MonoBehaviour)_hand.Held;
         _hand.Place();
+        ingredient.gameObject.SetActive(false);
         Order = updated;
         OnOrderChanged(Order);
     }

@@ -8,12 +8,14 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private InputAction _move;
     [SerializeField] private InputAction _interact;
 
-    private IInteractable _nearby;
     private Rigidbody _rb;
+    private SphereCollider _collider;
+    private readonly Collider[] _hitBuffer = new Collider[8];
 
     private void Awake()
     {
         _rb = GetComponent<Rigidbody>();
+        _collider = GetComponent<SphereCollider>();
     }
 
     private void OnEnable() => EnableControls();
@@ -42,16 +44,16 @@ public class PlayerController : MonoBehaviour
 
     private void OnInteract(InputAction.CallbackContext _)
     {
-        _nearby?.Interact();
-    }
-
-    private void OnTriggerEnter(Collider other)
-    {
-        _nearby = other.GetComponentInParent<IInteractable>();
-    }
-
-    private void OnTriggerExit(Collider other)
-    {
-        _nearby = null;
+        int count = Physics.OverlapSphereNonAlloc(transform.position, _collider.radius, _hitBuffer);
+        for (int i = 0; i < count; i++)
+        {
+            Collider hit = _hitBuffer[i];
+            IInteractable interactable = hit.GetComponentInParent<IInteractable>();
+            if (interactable != null)
+            {
+                interactable.Interact();
+                return;
+            }
+        }
     }
 }

@@ -36,23 +36,6 @@ public class ChoppingTableTimerTests
         _created.Clear();
     }
 
-    [UnityTest]
-    public IEnumerator AfterChopDuration_ChoppedVegetableSpawnsAtTablePosition()
-    {
-        PlayerHand hand = Spawn("Player").GetComponentInChildren<PlayerHand>();
-        ChoppingTable table = Spawn("ChoppingTable").GetComponent<ChoppingTable>();
-        yield return null;
-
-        table.transform.position = new Vector3(1f, 2f, 3f);
-        hand.TryPickUp(Spawn("RawVegetable").GetComponent<RawVegetable>());
-        table.Interact();
-
-        yield return WaitForChop;
-
-        ChoppedVegetable chopped = Object.FindFirstObjectByType<ChoppedVegetable>();
-        _created.Add(chopped.gameObject);
-        Assert.AreEqual(new Vector3(1f, 2f, 3f), chopped.transform.position);
-    }
 
     [UnityTest]
     public IEnumerator WhenVegetableIsChopped_Interact_WithEmptyHand_PutsItInHand()

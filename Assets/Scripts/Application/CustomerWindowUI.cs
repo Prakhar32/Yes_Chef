@@ -55,7 +55,8 @@ public class CustomerWindowUI : MonoBehaviour
         for (int i = 0; i < MaxIngredients; i++)
             _ingredientLabels[i].gameObject.SetActive(false);
         _scoreText.gameObject.SetActive(true);
-        _scoreText.text = $"+{_window.GetScoreDelta()}";
+        string sign = _window.GetScoreDelta() >= 0 ? "+" : "-";
+        _scoreText.text = $"{sign}{Math.Abs(_window.GetScoreDelta())}";
         StartCoroutine(fadeScore());
     }
 

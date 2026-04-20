@@ -6,7 +6,7 @@ public class OrderDispatcher : MonoBehaviour
     [SerializeField] private CustomerWindowUI[] _windows;
     private const float RespawnDelay = 3f;
 
-    private void Start()
+    private void Awake()
     {
         foreach (CustomerWindowUI ui in _windows)
             ui.OnReady += onWindowReady;

@@ -26,7 +26,7 @@ public class CustomerWindowUI : MonoBehaviour
         }
 
         _window.OnOrderChanged += orderUpdated;
-        OnReady(_window);
+        OnReady?.Invoke(_window);
     }
 
     private void orderUpdated(Order order)
@@ -74,6 +74,6 @@ public class CustomerWindowUI : MonoBehaviour
         _scoreText.gameObject.SetActive(false);
         color.a = 1f;
         _scoreText.color = color;
-        OnReady(_window);
+        OnReady?.Invoke(_window);
     }
 }

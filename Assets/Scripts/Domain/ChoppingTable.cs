@@ -5,6 +5,8 @@ public class ChoppingTable : MonoBehaviour, IInteractable
 {
     public ChoppedVegetable choppedVegetablePrefab;
 
+    [SerializeField]
+    private Transform _ingredientPlacement;
     private const float Duration = 2f;
     private RawVegetable _chopping;
     private ChoppedVegetable _ready;
@@ -36,7 +38,7 @@ public class ChoppingTable : MonoBehaviour, IInteractable
         {
             _chopping = raw;
             _hand.Place();
-            _chopping.transform.position = transform.position;
+            _chopping.transform.position = _ingredientPlacement.position;
             StartCoroutine(Chop());
         }
     }

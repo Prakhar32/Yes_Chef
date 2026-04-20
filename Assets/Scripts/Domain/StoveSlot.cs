@@ -5,6 +5,8 @@ public class StoveSlot : MonoBehaviour, IInteractable
 {
     public CookedMeat cookedMeatPrefab;
 
+    [SerializeField]
+    private Transform _ingredientPlacement;
     private const float Duration = 6f;
     private RawMeat _cooking;
     private CookedMeat _ready;
@@ -36,7 +38,7 @@ public class StoveSlot : MonoBehaviour, IInteractable
         {
             _cooking = raw;
             _hand.Place();
-            _cooking.transform.position = transform.position;
+            _cooking.transform.position = _ingredientPlacement.position;
             StartCoroutine(Cook());
         }
     }

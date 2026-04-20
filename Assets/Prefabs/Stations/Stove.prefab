@@ -41,14 +41,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 3976062412673591142}
     m_Modifications:
-    - target: {fileID: 2712115251489921090, guid: 7f8bf37bb7a312f478ae92d0810f02b4, type: 3}
-      propertyPath: m_Size.x
-      value: 0.3
-      objectReference: {fileID: 0}
-    - target: {fileID: 2712115251489921090, guid: 7f8bf37bb7a312f478ae92d0810f02b4, type: 3}
-      propertyPath: m_IsTrigger
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 4908446894387135627, guid: 7f8bf37bb7a312f478ae92d0810f02b4, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.3
@@ -96,29 +88,8 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 5716649975524417073, guid: 7f8bf37bb7a312f478ae92d0810f02b4, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 7363802051753314810}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7f8bf37bb7a312f478ae92d0810f02b4, type: 3}
---- !u!1 &4971435571089840222 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5716649975524417073, guid: 7f8bf37bb7a312f478ae92d0810f02b4, type: 3}
-  m_PrefabInstance: {fileID: 840915919284586095}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &7363802051753314810
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4971435571089840222}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7ee4c6b1e4237b146a2ac2406f90d13c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: YesChef.Domain::YesChef.Domain.StoveSlot
-  cookedMeatPrefab: {fileID: 213443815783770000, guid: 21ea07f857e7c6b42bc03109c432c1a4, type: 3}
 --- !u!4 &5743715580125201124 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4908446894387135627, guid: 7f8bf37bb7a312f478ae92d0810f02b4, type: 3}
@@ -215,3 +186,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: YesChef.Domain::YesChef.Domain.StoveSlot
   cookedMeatPrefab: {fileID: 213443815783770000, guid: 21ea07f857e7c6b42bc03109c432c1a4, type: 3}
+  _ingredientPlacement: {fileID: 0}

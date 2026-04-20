@@ -8,6 +8,8 @@ public sealed class Order
     public int Score { get; }
     public bool IsComplete => _pending.Count == 0;
 
+    public IReadOnlyList<Type> GetRemainingIngredients() => _pending.AsReadOnly();
+
     public Order(Type[] types)
     {
         foreach (var type in types)

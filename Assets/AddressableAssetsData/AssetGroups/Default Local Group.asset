@@ -25,6 +25,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2564a9ad049080e458018ae6a2b46496
+    m_Address: CustomerWindow
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 48eb6cb4a41042f4cb173520abaa076e
     m_Address: ChoppedVegetable
     m_ReadOnly: 0

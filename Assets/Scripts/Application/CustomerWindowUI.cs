@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class CustomerWindowUI : MonoBehaviour
 {
@@ -11,6 +10,8 @@ public class CustomerWindowUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _scoreText;
     [SerializeField] private Transform _ingredientsContainer;
     [SerializeField] private TextMeshProUGUI _ingredientLabelPrefab;
+
+    public event System.Action<CustomerWindow> OnReady;
 
     private TextMeshProUGUI[] _ingredientLabels;
     private const int MaxIngredients = 3;
@@ -25,6 +26,7 @@ public class CustomerWindowUI : MonoBehaviour
         }
 
         _window.OnOrderChanged += orderUpdated;
+        OnReady(_window);
     }
 
     private void orderUpdated(Order order)
@@ -72,5 +74,6 @@ public class CustomerWindowUI : MonoBehaviour
         _scoreText.gameObject.SetActive(false);
         color.a = 1f;
         _scoreText.color = color;
+        OnReady(_window);
     }
 }

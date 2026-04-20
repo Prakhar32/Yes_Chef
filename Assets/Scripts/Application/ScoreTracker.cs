@@ -5,16 +5,13 @@ public class ScoreTracker : MonoBehaviour
 {
     [SerializeField] private CustomerWindow[] _windows;
     [SerializeField] private GameTimer _timer;
+    [SerializeField] private TextMeshProUGUI _scoreText;
+    [SerializeField] private TextMeshProUGUI _pauseScoreText;
+    [SerializeField] private TextMeshProUGUI _pauseHighScoreText;
 
     private const string HighScoreKey = "HighScore";
 
-    private TextMeshProUGUI _text;
     private int _score;
-
-    private void Awake()
-    {
-        _text = GetComponent<TextMeshProUGUI>();
-    }
 
     private void Start()
     {
@@ -26,6 +23,7 @@ public class ScoreTracker : MonoBehaviour
 
         _timer.OnExpired += CheckHighScore;
         UpdateDisplay();
+        _pauseHighScoreText.text = $"High Score: {PlayerPrefs.GetInt(HighScoreKey, 0)}";
     }
 
     private void AddScore(int delta)
@@ -34,12 +32,20 @@ public class ScoreTracker : MonoBehaviour
         UpdateDisplay();
     }
 
-    private void UpdateDisplay() => _text.text = _score.ToString();
+    private void UpdateDisplay()
+    {
+        _scoreText.text = _score.ToString();
+        _pauseScoreText.text = $"Score: {_score}";
+    }
 
     private void CheckHighScore()
     {
         int high = PlayerPrefs.GetInt(HighScoreKey, 0);
         if (_score > high)
+        {
             PlayerPrefs.SetInt(HighScoreKey, _score);
+            high = _score;
+        }
+        _pauseHighScoreText.text = $"High Score: {high}";
     }
 }
